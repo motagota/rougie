@@ -1,0 +1,83 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="Rougie MMO Proto"
+run/main_scene="res://scenes/Bootstrap.tscn"
+config/features=PackedStringArray("4.4")
+
+[autoload]
+
+Network="*res://scripts/Network.gd"
+EntryPoint="*res://scripts/EntryPoint.gd"
+
+[input]
+
+move_forward={
+"deadzone": 0.5,
+"events": [{
+"device": -1,
+"keycode": 87,
+"physical": true,
+"pressed": false,
+"type": "input_event_key"
+}]
+}
+move_back={
+"deadzone": 0.5,
+"events": [{
+"device": -1,
+"keycode": 83,
+"physical": true,
+"pressed": false,
+"type": "input_event_key"
+}]
+}
+move_left={
+"deadzone": 0.5,
+"events": [{
+"device": -1,
+"keycode": 65,
+"physical": true,
+"pressed": false,
+"type": "input_event_key"
+}]
+}
+move_right={
+"deadzone": 0.5,
+"events": [{
+"device": -1,
+"keycode": 68,
+"physical": true,
+"pressed": false,
+"type": "input_event_key"
+}]
+}
+jump={
+"deadzone": 0.5,
+"events": [{
+"device": -1,
+"keycode": 32,
+"physical": true,
+"pressed": false,
+"type": "input_event_key"
+}]
+}
+chat_focus={
+"deadzone": 0.5,
+"events": [{
+"device": -1,
+"keycode": 13,
+"physical": true,
+"pressed": false,
+"type": "input_event_key"
+}]
+}

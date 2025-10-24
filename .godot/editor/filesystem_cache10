@@ -1,0 +1,16 @@
+ea4bc82a6ad023ab7ee23ee620429895
+::res://::1761344702
+::res://godot-version-check/::1761313219
+::res://scenes/::1761344274
+Bootstrap.tscn::PackedScene::5972391213679363647::1761344274::0::1::::<><><>0<>0<><>::
+Main.tscn::PackedScene::3063594839223063203::1761344274::0::1::::<><><>0<>0<><>::uid://caemti1r2i6d5::::res://scripts/Main.gd
+Player.tscn::PackedScene::8605728785644466784::1761344274::0::1::::<><><>0<>0<><>::uid://4kabgsiwisi4::::res://scripts/Player.gd
+ServerMain.tscn::PackedScene::9058914699253306440::1761344274::0::1::::<><><>0<>0<><>::uid://p16q1vak5fm3::::res://scripts/ServerMain.gd
+World.tscn::PackedScene::4357289818462792200::1761344274::0::1::::<><><>0<>0<><>::uid://bw6pklgqojmmq::::res://scripts/World.gd
+::res://scripts/::1761344192
+EntryPoint.gd::GDScript::8746473925821947833::1761344192::0::1::::<>Node<><>0<>0<><>::
+Main.gd::GDScript::4781861873560381456::1761343147::0::1::::<>Control<><>0<>0<><>::
+Network.gd::GDScript::596403830505574457::1761344192::0::1::::<>Node<><>0<>0<><>::
+Player.gd::GDScript::2056122372177240469::1761344192::0::1::::<>CharacterBody3D<><>0<>0<><>::
+ServerMain.gd::GDScript::1108418673716823832::1761344192::0::1::::<>Node<><>0<>0<><>::
+World.gd::GDScript::3995500154707934080::1761343458::0::1::::<>Node3D<><>0<>0<><>::

@@ -1,0 +1,80 @@
+﻿extends Node
+
+signal chat_received(username: String, text: String)
+
+const DEFAULT_PORT: int = 8910
+
+var username: String = ""
+var toon_color: Color = Color.from_hsv(randf(), 0.7, 0.9)
+
+var world: Node = null
+var players := {} # peer_id -> {"username": String, "color": String}
+
+var _spawn_queue: Array = []
+var _remove_queue: Array = []
+var _chat_queue: Array = []
+
+func _ready() -> void:
+\t# Connect multiplayer tree signals
+\tmultiplayer.peer_connected.connect(_on_peer_connected)
+\tmultiplayer.peer_disconnected.connect(_on_peer_disconnected)
+\tmultiplayer.connected_to_server.connect(_on_connected_to_server)
+\tmultiplayer.connection_failed.connect(_on_connection_failed)
+\tmultiplayer.server_disconnected.connect(_on_server_disconnected)
+
+func set_profile(name: String, color: Color) -> void:
+\tusername = name.strip_edges()
+\ttoon_color = color
+
+func set_world(w: Node) -> void:
+\tworld = w
+\t# Flush any queued events that arrived before the world loaded
+\tfor s in _spawn_queue:
+\t\t(world as Node).call_deferred("spawn_player", s.peer_id, s.username, Color(s.color))
+\t_spawn_queue.clear()
+\tfor r in _remove_queue:
+\t\t(world as Node).call_deferred("remove_player", r)
+\t_remove_queue.clear()
+\tfor c in _chat_queue:
+\t\temit_signal("chat_received", c.name, c.text)
+\t_chat_queue.clear()
+
+func host(port: int = DEFAULT_PORT) -> void:
+\tvar peer := ENetMultiplayerPeer.new()
+\tvar err := peer.create_server(port)
+\tif err != OK:
+\t\tpush_error("Failed to host server: %s" % err)
+\t\treturn
+\tmultiplayer.multiplayer_peer = peer
+\t# As server, consider self connected; register our player
+\t# Delay slightly to allow scenes to catch up
+\tcall_deferred("_register_self_on_server")
+
+func join(address: String, port: int = DEFAULT_PORT) -> void:
+\tvar peer := ENetMultiplayerPeer.new()
+\tvar err := peer.create_client(address, port)
+\tif err != OK:
+\t\tpush_error("Failed to connect: %s" % err)
+\t\treturn
+\tmultiplayer.multiplayer_peer = peer
+
+func disconnect() -> void:
+\tif multiplayer.multiplayer_peer:
+\t\tmultiplayer.multiplayer_peer.close()
+\tmultiplayer.multiplayer_peer = null
+\tplayers.clear()
+
+func _register_self_on_server() -> void:
+\tif multiplayer.multiplayer_peer == null:
+\t\treturn
+\t# Whether host or client, use the same RPC path to server (ID 1)
+\tvar color_html := toon_color.to_html(false)
+\trpc_id(1, "server_register_player", username, color_html)
+
+func _on_connected_to_server() -> void:
+\t# After connection, register profile with server
+\t_register_self_on_server()
+
+func _on_connection_failed() -> void:
+\tpush_warning("Connection failed")
+
