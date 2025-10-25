@@ -24,7 +24,7 @@ func _ready() -> void:
     panel.add_child(vb)
 
     var title := Label.new()
-    title.text = "Rougie MMO Proto"
+    title.text = "Rougie MMO Prototype"
     title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     title.add_theme_font_size_override("font_size", 24)
     vb.add_child(title)
@@ -46,10 +46,12 @@ func _ready() -> void:
     vb.add_child(color_hb)
     var color_lbl := Label.new()
     color_lbl.text = "Toon color:"
-    color_lbl.custom_minimum_size = Vector2(100, 0)
+    color_lbl.custom_minimum_size = Vector2(100, 10)
     color_hb.add_child(color_lbl)
     _color_picker = ColorPickerButton.new()
     _color_picker.color = Color.from_hsv(randf(), 0.7, 0.9)
+    _color_picker.edit_alpha = false
+    _color_picker.custom_minimum_size = Vector2(100, 30)
     color_hb.add_child(_color_picker)
 
     # Host / Join controls
@@ -59,9 +61,12 @@ func _ready() -> void:
     vb.add_child(_host_btn)
 
     var join_hb := HBoxContainer.new()
+    join_hb.custom_minimum_size = Vector2(80, 40)
     vb.add_child(join_hb)
     _join_addr = LineEdit.new()
     _join_addr.placeholder_text = "Server address (e.g. 127.0.0.1)"
+    _join_addr.text = "127.0.0.1"
+    _join_addr.custom_minimum_size = Vector2(100, 0)
     join_hb.add_child(_join_addr)
     _join_btn = Button.new()
     _join_btn.text = "Join"
