@@ -12,6 +12,9 @@ func _ready() -> void:
     _ticker.timeout.connect(_on_tick)
     add_child(_ticker)
     print("[Server] Dedicated server running on port %d" % Network.current_port)
+    
+    if OS.has_feature("linux") or OS.has_feature("macos"):
+        get_tree().root.propagate_notification(NOTIFICATION_WM_CLOSE_REQUEST)
 
 func _on_tick() -> void:
     # Log connected peers count and usernames.
@@ -23,7 +26,7 @@ func _on_tick() -> void:
     print("[Server] Peers: %d => %s" % [ids.size(), ", ".join(names)])
 
 func _notification(what: int) -> void:
-    if what == NOTIFICATION_WM_CLOSE_REQUEST:
+    if what == NOTIFICATION_WM_CLOSE_REQUEST or what == NOTIFICATION_PREDELETE:
         print("[Server] Shutting down...")
         Network.shutdown()
         get_tree().quit()

@@ -68,13 +68,25 @@ func shutdown() -> void:
     players.clear()
 
 func _register_self_on_server() -> void:
+    print("_register_self_on_server called")
     if multiplayer.multiplayer_peer == null:
+        print("ERROR: multiplayer_peer is null!")
         return
     # Whether host or client, use the same RPC path to server (ID 1)
     var color_html := toon_color.to_html(false)
-    rpc_id(1, "server_register_player", username, color_html)
+    print("Sending registration: username=%s, color=%s" % [username, color_html])
+    
+    if multiplayer.is_server():
+        # Server registers itself directly (no RPC needed)
+        var my_id := multiplayer.get_unique_id()
+        players[my_id] = {"username": username, "color": color_html}
+        client_spawn_player(my_id, username, color_html)
+    else:
+        # Client sends RPC to server
+        rpc_id(1, "server_register_player", username, color_html)
 
 func _on_connected_to_server() -> void:
+    print("Connected to server! Registering...")
     # After connection, register profile with server
     _register_self_on_server()
 
@@ -96,7 +108,7 @@ func _on_peer_disconnected(id: int) -> void:
         # Also remove on server locally
         client_remove_player(id)
 
-@rpc("any_peer")
+@rpc("any_peer","call_local", "reliable")
 func server_register_player(reg_username: String, color_html: String) -> void:
     if not multiplayer.is_server():
         return
@@ -104,10 +116,8 @@ func server_register_player(reg_username: String, color_html: String) -> void:
     if from_id == 0:
         from_id = multiplayer.get_unique_id()
     players[from_id] = {"username": reg_username, "color": color_html}
-    # Send existing players to the new peer first (including server and others)
+    # Send full roster (including self) to the new peer
     for pid in players.keys():
-        if pid == from_id:
-            continue
         var info = players[pid]
         rpc_id(from_id, "client_spawn_player", pid, info["username"], info["color"])
     # Now broadcast the new player to everyone else
@@ -154,8 +164,16 @@ func server_send_chat(text: String) -> void:
     # And handle on server locally
     client_recv_chat(name, text)
 
-@rpc("any_peer")
+@rpc("any_peer", "call_local")
 func client_recv_chat(name: String, text: String) -> void:
+    if multiplayer.is_server() and text.strip_edges() == "/quit":
+        print("[Server] Shutdown command received from %s" % name)
+        rpc("client_recv_chat", "SERVER", "Server shutting down in 3 seconds...")
+        await get_tree().create_timer(3.0).timeout
+        Network.shutdown()
+        get_tree().quit()
+        return
+        
     if world == null:
         _chat_queue.append({"name": name, "text": text})
         return
