@@ -10,4 +10,4 @@ export_presets.cfg
 build/
 builds/
 exports/
-.godot
+.godot/
