@@ -1,0 +1,12 @@
+.import/
+export.cfg
+export_presets.cfg
+*.translation
+
+*.exe
+*.pck
+*.zip
+
+build/
+builds/
+exports/
