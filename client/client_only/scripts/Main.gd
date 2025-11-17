@@ -86,8 +86,7 @@ func _ready() -> void:
     _pickup_label.add_theme_color_override("font_color", Color(1, 1, 0))  # Yellow
     _pickup_label.hide()
     vb.add_child(_pickup_label)
-    
-    show_pickup_prompt()
+
 
     # Ensure clean network state when returning to menu
     Network.shutdown()
@@ -119,11 +118,3 @@ func _on_join() -> void:
     Network.join(addr)
     # Change immediately; spawns will sync when connected
     _goto_world()
-    
-func show_pickup_prompt():
-    if _pickup_label:
-        _pickup_label.show()
-
-func hide_pickup_prompt():
-    if _pickup_label:
-        _pickup_label.hide()

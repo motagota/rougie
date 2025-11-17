@@ -1,3 +1,6 @@
 res://client_only/scenes/Main.tscn
 res://client_only/scripts/Main.gd
 res://shared/scenes/Bootstrap.tscn
+res://shared/scenes/World.tscn
+res://shared/scripts/Rock.gd
+res://shared/scripts/World.gd

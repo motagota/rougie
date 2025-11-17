@@ -27,12 +27,6 @@ func _ready() -> void:
     cs.shape = shape
     area.add_child(cs)
     add_child(area)
-    
-    area.body_entered.connect(_on_body_entered)
-    area.body_exited.connect(_on_body_exited)
-    var rock = get_node("Rock")  # adjust path
-    rock.player_entered.connect(_on_player_near_rock)
-    rock.player_exited.connect(_on_player_left_rock)
 
 func _on_player_near_rock(_body):
     print("_player near rock")

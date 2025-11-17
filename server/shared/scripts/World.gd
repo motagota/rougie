@@ -148,6 +148,10 @@ func _ready() -> void:
     _hint_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     _hint_label.visible = false
     hb.add_child(_hint_label)
+    
+    print("[World] Hint label created: ", _hint_label != null)
+    print("[World] Hint label visible: ", _hint_label.visible if _hint_label else "null")
+    print("[World] Hint label text: ", _hint_label.text if _hint_label else "null")
 
 func spawn_player(peer_id: int, username: String, color: Color) -> void:
     print("[World] Spawn player: start username: %s"%username)
@@ -265,10 +269,16 @@ func _process(delta: float) -> void:
     if not players.has(local_id):
         _hint_label.visible = false
         return
+        
     var player: Node3D = players[local_id]
+    if not is_instance_valid(player):
+        _hint_label.visible = false
+        return
+    
     var p := player.global_transform.origin
     var best_id := -1
     var best_d := 99999.0
+    
     for nid in items.keys():
         var n: Node3D = items[nid]
         if not is_instance_valid(n):
@@ -279,10 +289,15 @@ func _process(delta: float) -> void:
         if d < best_d:
             best_d = d
             best_id = int(nid)
+            
     _nearest_item_id = best_id
+    
     var show := best_id != -1 and best_d <= 2.5
-    _hint_label.visible = show
-
+    if _hint_label:
+        _hint_label.visible = show
+        if show:
+            print("[World] Showing pickup hint for item %d at distance %.2f" % [best_id, best_d])
+            
 func _on_item_area_entered(body: Node, item_id: int) -> void:
     var local_id := multiplayer.get_unique_id()
     if players.has(local_id) and body == players[local_id]:
