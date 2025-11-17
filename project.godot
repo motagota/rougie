@@ -11,13 +11,13 @@ config_version=5
 [application]
 
 config/name="Rougie MMO Proto"
-run/main_scene="res://scenes/Bootstrap.tscn"
+run/main_scene="res://shared/scenes/Bootstrap.tscn"
 config/features=PackedStringArray("4.4")
 
 [autoload]
 
-Network="*res://scripts/Network.gd"
-EntryPoint="*res://scripts/EntryPoint.gd"
+Network="*res://shared/scripts/Network.gd"
+EntryPoint="*res://shared/scripts/EntryPoint.gd"
 
 [input]
 

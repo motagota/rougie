@@ -1,0 +1,3 @@
+res://client_only/scenes/Main.tscn
+res://client_only/scripts/Main.gd
+res://shared/scenes/Bootstrap.tscn

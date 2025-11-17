@@ -1,8 +1,0 @@
-res://scenes/Bootstrap.tscn
-res://scenes/World.tscn
-res://scenes/ServerMain.tscn
-res://scenes/Player.tscn
-res://scenes/Main.tscn
-res://scripts/Network.gd
-res://scripts/World.gd
-res://scripts/BotManager.gd

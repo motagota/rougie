@@ -1,0 +1,17 @@
+ea4bc82a6ad023ab7ee23ee620429895
+::res://::1763184208
+export_presets.cfg::TextFile/TextFile::-1::1763125430::0::1::::<><><>0<>0<><>::
+::res://server_only/::1763120813
+::res://shared/::1763120793
+::res://shared/assets/::1763120793
+::res://shared/scenes/::1763192577
+Bootstrap.tscn::PackedScene/PackedScene::5972391213679363647::1763192032::0::1::::<><><>0<>0<><>::
+Player.tscn::PackedScene/PackedScene::8605728785644466784::1763122412::0::1::::<><><>0<>0<><>::res://shared/scripts/Player.gd
+World.tscn::PackedScene/PackedScene::4357289818462792200::1763125430::0::1::::<><><>0<>0<><>::res://shared/scripts/World.gd
+::res://shared/scripts/::1763201190
+EntryPoint.gd::GDScript/GDScript::8746473925821947833::1763184711::0::1::::<>Node<><>0<>0<><>::
+Item.gd::GDScript/GDScript::6033621351841522142::1763126213::0::1::::<>Node3D<><>0<>0<><>::
+Network.gd::GDScript/GDScript::596403830505574457::1763185748::0::1::::<>Node<><>0<>0<><>::
+Player.gd::GDScript/GDScript::2056122372177240469::1763191744::0::1::::<>CharacterBody3D<><>0<>0<><>::
+Rock.gd::GDScript/GDScript::4941432502064591236::1763201190::0::1::::<>Node3D<><>0<>0<><>::
+World.gd::GDScript/GDScript::3995500154707934080::1763191591::0::1::::<>Node3D<><>0<>0<><>::
