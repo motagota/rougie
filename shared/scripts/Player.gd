@@ -57,8 +57,6 @@ func setup(username: String, color: Color) -> void:
         _collision.shape = cap
         _collision.position = Vector3(0, 1.0, 0)
         add_child(_collision)
-    collision_layer = 1
-    collision_mask = 1
 
     _is_local = is_multiplayer_authority()
     if _is_local:

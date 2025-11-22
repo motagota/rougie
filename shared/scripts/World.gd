@@ -109,7 +109,6 @@ func _ready() -> void:
     Network.set_world(self)
     Network.chat_received.connect(_on_chat_received)
     Network.inventory_updated.connect(_on_inventory_updated)
-    set_process(true)
 
     _inventory_layer = CanvasLayer.new()
     add_child(_inventory_layer)
@@ -139,48 +138,15 @@ func _ready() -> void:
     _hint_panel.anchor_top = 0.92
     _hint_panel.anchor_bottom = 0.98
     _hint_panel.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
-    _hint_layer.add_child(_hint_panel)    
+    _hint_layer.add_child(_hint_panel)
     var hb := HBoxContainer.new()
-    hb.custom_minimum_size = Vector2(260, 28)    
+    hb.custom_minimum_size = Vector2(260, 28)
     _hint_panel.add_child(hb)
     _hint_label = Label.new()
     _hint_label.text = "Press [E] to pick up"
     _hint_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-    _hint_label.visible = true
+    _hint_label.visible = false
     hb.add_child(_hint_label)
-   
-    
-    _hint_label.custom_minimum_size = Vector2(260, 28)
-    _hint_label.add_theme_color_override("font_color", Color(0, 0, 0)) # black
-    _hint_label.add_theme_font_size_override("font_size", 24)   
-    var style := StyleBoxFlat.new()
-    style.bg_color = Color(1, 0, 1, 0.9)   # magenta, opaque
-   
-    
-    print("[World] Hint label created: ", _hint_label != null)
-    print("[World] Hint label visible: ", _hint_label.visible if _hint_label else "null")
-    print("[World] Hint label text: ", _hint_label.text if _hint_label else "null")
-    print("[World] Hint layer visible: ", _hint_layer.visible)
-    print("[World] Hint panel visible: ", _hint_panel.visible)
-    
-    # --- bottom-center test button ---------------------------------
-    var test_btn := Button.new()
-    test_btn.text = "Force show hint"
-    test_btn.custom_minimum_size = Vector2(200, 40)
-
-    # anchor it center-bottom (like the hint panel)
-    test_btn.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
-    test_btn.anchor_top = 0.85
-    test_btn.anchor_bottom = 0.85
-    test_btn.grow_horizontal = Control.GROW_DIRECTION_BOTH
-
-    test_btn.pressed.connect(func():
-        _hint_label.visible = true
-        _hint_label.modulate = Color.RED
-        prints("Forced hint visible =", _hint_label.visible,
-           "in_tree =", _hint_label.is_inside_tree())
-    )
-    add_child(test_btn)
 
 func spawn_player(peer_id: int, username: String, color: Color) -> void:
     print("[World] Spawn player: start username: %s"%username)
@@ -223,7 +189,6 @@ func spawn_item(item_id: int, type_name: String, pos: Vector3, node: Node3D) -> 
         (area as Area3D).body_entered.connect(Callable(self, "_on_item_area_entered").bind(item_id))
         (area as Area3D).body_exited.connect(Callable(self, "_on_item_area_exited").bind(item_id))
     items[item_id] = node
-    call_deferred("_check_item_overlap", item_id)
 
 func remove_item(item_id: int) -> void:
     if not items.has(item_id):
@@ -298,16 +263,10 @@ func _process(delta: float) -> void:
     if not players.has(local_id):
         _hint_label.visible = false
         return
-        
     var player: Node3D = players[local_id]
-    if not is_instance_valid(player):
-        _hint_label.visible = false
-        return
-    
     var p := player.global_transform.origin
     var best_id := -1
     var best_d := 99999.0
-    
     for nid in items.keys():
         var n: Node3D = items[nid]
         if not is_instance_valid(n):
@@ -318,15 +277,10 @@ func _process(delta: float) -> void:
         if d < best_d:
             best_d = d
             best_id = int(nid)
-            
     _nearest_item_id = best_id
-    
     var show := best_id != -1 and best_d <= 2.5
-    if _hint_label:
-        _hint_label.visible = show
-        if show:
-            print("[World] Showing pickup hint for item %d at distance %.2f" % [best_id, best_d])
-            
+    _hint_label.visible = show
+
 func _on_item_area_entered(body: Node, item_id: int) -> void:
     var local_id := multiplayer.get_unique_id()
     if players.has(local_id) and body == players[local_id]:
@@ -338,23 +292,6 @@ func _on_item_area_exited(body: Node, item_id: int) -> void:
     if players.has(local_id) and body == players[local_id]:
         if _nearest_item_id == item_id:
             _hint_label.visible = false
-
-func _check_item_overlap(item_id: int) -> void:
-    if not items.has(item_id):
-        return
-    var node: Node3D = items[item_id]
-    var area := node.get_node_or_null("InteractArea")
-    if area == null or not (area is Area3D):
-        return
-    var bodies := (area as Area3D).get_overlapping_bodies()
-    var local_id := multiplayer.get_unique_id()
-    if players.has(local_id):
-        var player: Node3D = players[local_id]
-        for b in bodies:
-            if b == player:
-                _nearest_item_id = item_id
-                _hint_label.visible = true
-                break
 
 func request_pickup_nearest() -> void:
     var local_id := multiplayer.get_unique_id()

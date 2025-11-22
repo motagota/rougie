@@ -12,7 +12,7 @@ var toon_color: Color = Color.from_hsv(randf(), 0.7, 0.9)
 
 var world: Node = null
 var players := {} # peer_id -> {"username": String, "color": String}
-var items := {} # item_id -> {"type": String, "pos": Vector3, "node": Node}
+var items := {} # item_id -> {"type": String, "node": Node}
 var _next_item_id: int = 10000
 
 var _spawn_queue: Array = []
@@ -211,11 +211,6 @@ func server_register_player(reg_username: String, color_html: String) -> void:
         rpc_id(pid, "client_spawn_player", from_id, reg_username, color_html)
     # Ensure server also spawns locally
     client_spawn_player(from_id, reg_username, color_html)
-    for nid in items.keys():
-        var info: Dictionary = items[nid]
-        var t: String = String(info.get("type", ""))
-        var p: Vector3 = info.get("pos", Vector3.ZERO)
-        rpc_id(from_id, "client_spawn_item", int(nid), t, p)
 
 @rpc("any_peer")
 func client_spawn_player(peer_id: int, reg_username: String, color_html: String) -> void:
@@ -390,7 +385,7 @@ func _spawn_item_on_server(nid: int, type_name: String, pos: Vector3) -> void:
         node = load("res://shared/scripts/Rock.gd").new()
     if node == null:
         return
-    items[nid] = {"type": type_name, "pos": pos, "node": node}
+    items[nid] = {"type": type_name, "node": node}
     rpc("client_spawn_item", nid, type_name, pos)
     if world != null:
         world.call_deferred("spawn_item", nid, type_name, pos, node)
@@ -402,7 +397,7 @@ func client_spawn_item(nid: int, type_name: String, pos: Vector3) -> void:
         node = load("res://shared/scripts/Rock.gd").new()
     if node == null:
         return
-    items[nid] = {"type": type_name, "pos": pos, "node": node}
+    items[nid] = {"type": type_name, "node": node}
     if world == null:
         _item_spawn_queue.append({"nid": nid, "type": type_name, "pos": pos, "node": node})
     else:
